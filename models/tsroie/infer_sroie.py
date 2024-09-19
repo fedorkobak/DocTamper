@@ -11,7 +11,8 @@ from albumentations.pytorch import ToTensorV2
 import os
 import argparse
 from tqdm import tqdm
-from swinv2s import *
+# from swinv2s import *
+from torch import nn
 from dtd import seg_dtd
 
 parser = argparse.ArgumentParser()
