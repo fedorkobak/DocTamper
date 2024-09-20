@@ -13,7 +13,7 @@ import argparse
 from tqdm import tqdm
 # from swinv2s import *
 from torch import nn
-from dtd import seg_dtd
+from models.dtd import seg_dtd
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--input', type=str, default="test/")

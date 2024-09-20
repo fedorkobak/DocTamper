@@ -2,18 +2,27 @@
 
 This is the official repository of the paper Towards Robust Tampered Text Detection in Document Image: New dataset and New Solution. [paper](https://openaccess.thecvf.com/content/CVPR2023/papers/Qu_Towards_Robust_Tampered_Text_Detection_in_Document_Image_New_Dataset_CVPR_2023_paper.pdf).
 
+
+To install requirements use:
+
+```
+python3.8 -m venv venv
+pip3 install segmentation_models_pytorch==0.2.1
+pip3 install -r requirements.txt -U
+```
+
+`segmentation_models_pytorch` is now being installed separately due to a requirements conflict in the original repository. However, you can still install `segmentation_models_pytorch` independently from the main `requirements`. We're actively working to fix this issue.
+
+**Note**: We're using the CUDA 12.4 PyTorch distribution. If you're using a different version, specify the appropriate `--extra-index-url` for your setup.
+
 ## Dataset
 
 The DocTamper dataset is now avaliable at [BaiduDrive](https://pan.baidu.com/s/1nEEnq1ZWIem7wnkQ1YdTNw?pwd=od9k) and [Kaggle](https://www.kaggle.com/datasets/dinmkeljiame/doctamper/data).
 
-
 Use script `data.py` for downloading and unpacking data.
 
-The DocTamper dataset is only available for non-commercial use, you can request a password for it by sending an email  __with education email__ to 202221012612@mail.scut.edu.cn explaining the purpose.
-
-To visualize the images and their corresponding ground-truths from the provided .mdb files, you can run this command "python vizlmdb.py --input DocTamperV1-FCD --i 0".
-
 ---
+
 The official implementation of the paper  Towards Robust Tampered Text Detection in Document Image: New Dataset and New Solution is in the "models" directory.
 
 I delay the release of training codes as forced by my supervisor and the cooperative enterprise who bought them. My training pipline for DocTamper dataset and the IoU metric heavily brought from a famous project in this area, the results of  the paper can be easily re-produced with [it](https://github.com/DLLXW/data-science-competition/blob/main/tianchi/ImageForgeryLocationChallenge/utils/deeplearning_qyl.py), you just need to adjust the loss functions and the learing rate decay curve. I also used its [augmentation pipline](https://github.com/DLLXW/data-science-competition/blob/main/tianchi/ImageForgeryLocationChallenge/dataset/RSCDataset.py) except for (RandomBrightnessContrast, ShiftScaleRotate, CoarseDropout).
