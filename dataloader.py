@@ -16,7 +16,7 @@ from torch.utils.data import Dataset
 from albumentations.pytorch import ToTensorV2
 import torchvision
 
-from typing import Union, Tuple
+from typing import Union, Tuple, Dict, Any
 
 class DocTamperDataset(Dataset):
     '''
@@ -184,38 +184,36 @@ class TamperDataset(Dataset):
         return im, mask
 
 
-    def __getitem__(self, index: int):
+    def __getitem__(self, index: int) -> Dict[str, Any]:
 
-            im, mask = self.read_image(files_code=('%09d'%index))
+        im, mask = self.read_image(files_code=('%09d'%index))
 
-            # H,W = mask.shape
-            record = self.record[index]
-            choicei = len(record)-1
-            q = int(record[-1])
-            use_qtb = self.pks[q]
-            if choicei>1:
-                q2 = int(record[-3])
-                # use_qtb2 = self.pks[q2]
-            if choicei>0:
-                q1 = int(record[-2])
-                # use_qtb1 = self.pks[q1]
-            mask = self.totsr(image=mask.copy())['image']
-            with tempfile.NamedTemporaryFile(delete=True) as tmp:
-                im = im.convert("L")
-                if choicei>1:
-                    im.save(tmp,"JPEG",quality=q2)
-                    im = Image.open(tmp)
-                if choicei>0:
-                    im.save(tmp,"JPEG",quality=q1)
-                    im = Image.open(tmp)
-                im.save(tmp,"JPEG",quality=q)
-                jpg = jpegio.read(tmp.name)
-                dct = jpg.coef_arrays[0].copy()
-                im = im.convert('RGB')
-            return {
-                'image': self.toctsr(im),
-                'label': mask.long(),
-                'rgb': np.clip(np.abs(dct),0,20),
-                'q':use_qtb,
-                'i':q
-            }
+        record: Dict[int, np.ndarray] = self.record[index]
+
+        choicei = len(record)-1
+        q = int(record[-1])
+        use_qtb = self.pks[q]
+
+        with tempfile.NamedTemporaryFile(delete=True) as tmp:
+
+            im = im.convert("L")
+
+            quality = int(record[-3] if choicei > 1 else record[-2])
+            im.save(tmp, "JPEG", quality=quality)
+
+            im = Image.open(tmp)
+            im.save(tmp, "JPEG", quality=q)
+
+            jpg = jpegio.read(tmp.name)
+            dct = jpg.coef_arrays[0].copy()
+            im = im.convert('RGB')
+
+        mask = self.totsr(image=mask.copy())['image']
+        
+        return {
+            'image': self.toctsr(im),
+            'label': mask.long(),
+            'rgb': np.clip(np.abs(dct), 0, 20),
+            'q': use_qtb,
+            'i': q
+        }
