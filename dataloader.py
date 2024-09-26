@@ -202,7 +202,7 @@ class TamperDataset(Dataset):
             im.save(tmp, "JPEG", quality=quality)
 
             im = Image.open(tmp)
-            im.save(tmp, "JPEG", quality=q)
+            im.save(tmp, "JPEG", quality=quality)
 
             jpg = jpegio.read(tmp.name)
             dct = jpg.coef_arrays[0].copy()
